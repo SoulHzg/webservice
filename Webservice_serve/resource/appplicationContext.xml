@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+       <!-- use-default-filters 属性的默认值为 true，即使用默认的 Filter 进行包扫描，
+       而默认的 Filter 对标有 @Service,@Controller和@Repository 的注解的类进行扫描 -->
+       <!-- 扫描service和vo包下bean，IOC容器装配bean -->
+       <context:component-scan base-package="com.bestnet.services,com.bestnet.vo"></context:component-scan>
+
+       <!--
+           proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。首先说明下proxy-target-class="true"和proxy-target-class="false"的区别，
+           为true则是基于类的代理将起作用（需要cglib库），为false或者省略这个属性，则标准的JDK 基于接口的代理将起作用。
+           proxy-target-class在spring事务、aop、缓存这几块都有设置，其作用都是一样的
+           <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+           <aop:config proxy-target-class="true">
+           <cache:annotation-driven proxy-target-class="true"/>
+       -->
+       <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+
+       <bean id="aopProxy" class="com.proxy.AopProxy"></bean>
+       <aop:config>
+           <aop:pointcut id="aopPorxyPointCut" expression="execution(* com.bestnet.services.*.*.*(..))"></aop:pointcut>
+           <aop:aspect id="aopProxyAspect" ref="aopProxy">
+               <aop:around method="around" pointcut-ref="aopPorxyPointCut"></aop:around>
+           </aop:aspect>
+       </aop:config>
+
+       <!-- 引入jdbc.properties配置文件 -->
+       <context:property-placeholder location="classpath:/jdbc.properties"></context:property-placeholder>
+       <!-- 配置c3p0数据源 -->
+       <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+           <property name="user" value="${user_name}"></property>
+           <property name="password" value="${password}"></property>
+           <property name="driverClass" value="${driverClass}"></property>
+           <property name="jdbcUrl" value="${jdbcUrl}"></property>
+       </bean>
+
+       <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+           <property name="dataSource" ref="dataSource"></property>
+       </bean>
+</beans>

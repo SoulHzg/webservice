@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/appplicationContext.xml</param-value>
+    </context-param>
+    <!-- 读取Spring配置文件 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Servlet的名字是 springmvc，可以有多个DispatcherServlet，是通过名字来区分的。每一个DispatcherServlet有自己的
+        WebApplicationContext上下文对象。同时保存的ServletContext中和Request对象中，关于key。
+        在DispatcherServlet的初始化过程中，框架会在web应用的WEB-INF文件夹下寻找名为[servlet-name]-servlet.xml 的配置文件，
+        生成文件中定义的bean。 -->
+    <servlet>
+        <servlet-name>Spring MVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/springMVC.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Spring MVC</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+</web-app>
