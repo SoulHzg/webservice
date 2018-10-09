@@ -1,16 +1,25 @@
 package com.bestnet.vo;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "student", schema = "spring_hibernate", catalog = "")
+@Table(name="student")
 public class StudentEntity {
+    @Id
     private String id;
     private String name;
     private String sex;
 
-    @Basic
-    @Column(name = "id")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "studentEntity")
+    @XmlTransient
+    //@JoinColumn(name="student_id")
+    private List<BooksEntity> booksEntityList = new ArrayList<BooksEntity>();
+
     public String getId() {
         return id;
     }
@@ -19,8 +28,6 @@ public class StudentEntity {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -29,14 +36,20 @@ public class StudentEntity {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "sex")
     public String getSex() {
         return sex;
     }
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public List<BooksEntity> getBooksEntityList() {
+        return booksEntityList;
+    }
+
+    public void setBooksEntityList(List<BooksEntity> booksEntityList) {
+        this.booksEntityList = booksEntityList;
     }
 
     @Override
@@ -61,3 +74,4 @@ public class StudentEntity {
         return result;
     }
 }
+
